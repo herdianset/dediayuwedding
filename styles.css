@@ -26,7 +26,7 @@
     body {
       font-family: 'Poppins', sans-serif;
       color: var(--brown);
-      background: var(--cream);
+      background: #ffffff;
       overflow-x: hidden;
     }
 
@@ -36,9 +36,9 @@
       inset: 0;
       z-index: -3;
       background:
-        radial-gradient(circle at 20% 10%, rgba(201, 152, 53, 0.25), transparent 28%),
-        radial-gradient(circle at 85% 20%, rgba(143, 51, 38, 0.16), transparent 30%),
-        linear-gradient(135deg, #fff8ea 0%, #f7e4bd 48%, #fff7e7 100%);
+        radial-gradient(circle at 18% 8%, rgba(201, 152, 53, 0.10), transparent 32%),
+        radial-gradient(circle at 86% 18%, rgba(139, 99, 29, 0.08), transparent 30%),
+        linear-gradient(135deg, #ffffff 0%, #fffdf8 52%, #ffffff 100%);
     }
 
     body::after {
@@ -46,10 +46,23 @@
       position: fixed;
       inset: 0;
       z-index: -2;
-      opacity: 0.13;
+      opacity: 0.28;
       background-image:
-        linear-gradient(45deg, var(--gold) 12.5%, transparent 12.5%, transparent 50%, var(--gold) 50%, var(--gold) 62.5%, transparent 62.5%, transparent 100%);
-      background-size: 34px 34px;
+        repeating-linear-gradient(
+          135deg,
+          rgba(201, 152, 53, 0.12) 0,
+          rgba(201, 152, 53, 0.12) 1px,
+          transparent 1px,
+          transparent 14px
+        ),
+        repeating-linear-gradient(
+          45deg,
+          rgba(139, 99, 29, 0.06) 0,
+          rgba(139, 99, 29, 0.06) 1px,
+          transparent 1px,
+          transparent 20px
+        );
+      background-size: 22px 22px, 28px 28px;
       pointer-events: none;
     }
 
@@ -230,7 +243,7 @@
       box-shadow: var(--shadow);
       background:
         linear-gradient(rgba(76, 23, 19, 0.42), rgba(76, 23, 19, 0.52)),
-        url('./foto/GTA-36.jpg') center/cover;
+        url('./foto/optimized/GTA-36.jpg') center/cover;
       display: grid;
       place-items: center;
       text-align: center;
@@ -748,4 +761,5 @@
       .map-frame { min-height: 300px; }
       .rsvp-form { padding: 26px; }
     }
+
 
