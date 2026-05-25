@@ -240,9 +240,12 @@
       position: relative;
       overflow: hidden;
       box-shadow: var(--shadow);
-      background:
+      background-image:
         linear-gradient(rgba(76, 23, 19, 0.42), rgba(76, 23, 19, 0.52)),
-        url('./foto/optimized/GTA-36.jpg') center/cover;
+        url('./foto/optimized/GTA-36.jpg');
+      background-size: cover;
+      background-position: center 34%;
+      background-repeat: no-repeat;
       display: grid;
       place-items: center;
       text-align: center;
@@ -297,7 +300,7 @@
       border: 1px solid rgba(255, 247, 231, 0.38);
       border-radius: 18px;
       padding: 14px 8px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(1px);
     }
 
     .countdown strong {
@@ -803,6 +806,7 @@
 
       .hero-card {
         min-height: 620px;
+        background-position: center 26%;
       }
     }
 
@@ -811,13 +815,38 @@
       .navbar { top: 10px; border-radius: 24px; }
       .brand-mark { font-size: 1.3rem; }
       .hero { padding-top: 92px; }
-      .hero-card { border-radius: 24px; }
+      .hero-card {
+        border-radius: 24px;
+        min-height: 560px;
+        background-position: 58% 22%;
+      }
       #event .container { width: min(1120px, calc(100% - 20px)); }
       .timeline { grid-template-columns: 1fr; }
       .gallery-item { flex-basis: 88%; }
       .map-frame { min-height: 300px; }
       .wishes-window { height: 280px; }
       .rsvp-form { padding: 26px; }
+    }
+
+    @media (max-width: 500px) {
+      .countdown {
+        gap: 8px;
+        max-width: 360px;
+      }
+
+      .countdown div {
+        padding: 10px 6px;
+        border-radius: 14px;
+      }
+
+      .countdown strong {
+        font-size: 1.3rem;
+      }
+
+      .countdown span {
+        font-size: 0.64rem;
+        letter-spacing: 1.2px;
+      }
     }
 
     @media (max-width: 768px) {
