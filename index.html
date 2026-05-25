@@ -11,8 +11,7 @@
 <body>
   <nav class="navbar">
     <a class="brand" href="#home">
-      <!-- <span class="brand-mark">&#10022;</span> -->
-      <span>Dedi & Ayu</span>
+      <span class="brand-mark">Dedi & Ayu</span>
     </a>
     <button class="menu-toggle" aria-label="Buka menu">&#9776;</button>
     <ul class="nav-links">
@@ -57,7 +56,7 @@
             <div class="couple-photo">
               <img src="./foto/optimized/GTA-1.jpg" alt="Foto pengantin pria" loading="lazy" decoding="async" />
             </div>
-            <h3>I Wayan Dediyana</h3>
+            <h2>I Wayan Dediyana</h2>
             <p>Anak Pertama dari pasangan I wayan Tagel (Alm) dengan Ni Putu Latri (Alm).</p>
           </article>
 
@@ -65,7 +64,7 @@
             <div class="couple-photo">
               <img src="./foto/optimized/GTA-10.jpg" alt="Foto pengantin wanita" loading="lazy" decoding="async" />
             </div>
-            <h3>Ni Gusti Ayu Putu Puspayanti</h3>
+            <h2>Ni Gusti Ayu Putu Puspayanti</h2>
             <p>Anak Pertama Dari pasangan I Gusti Ketut Wirawan dengan Ni Desak Ketut Fajarwati</p>
           </article>
         </div>
@@ -76,7 +75,7 @@
       <div class="container reveal">
         <h2>&ldquo;Seperti canang yang dirangkai dengan tulus, semoga cinta kami menjadi persembahan indah untuk
           kehidupan bersama.&rdquo;</h2>
-        <p>Rahajeng Rawuh</p>
+        <!-- <p>Rahajeng Rawuh</p> -->
       </div>
     </section>
 
@@ -123,7 +122,9 @@
         <div class="section-title reveal">
           <h2>Memories</h2>
         </div>
-        <div class="gallery">
+        <div class="gallery-carousel reveal">
+          <button class="gallery-nav prev" id="galleryPrev" aria-label="Slide sebelumnya">&#10094;</button>
+          <div class="gallery" id="galleryTrack">
           <div class="gallery-item reveal"><img src="./foto/optimized/GTA-21.jpg" alt="Galeri momen 1" loading="lazy"
               decoding="async" /></div>
           <div class="gallery-item reveal"><img src="./foto/optimized/GTA-28.jpg" alt="Galeri momen 2" loading="lazy"
@@ -136,6 +137,9 @@
               decoding="async" /></div>
           <div class="gallery-item reveal"><img src="./foto/optimized/GTA-36.jpg" alt="Galeri momen 6" loading="lazy"
               decoding="async" /></div>
+          </div>
+          <button class="gallery-nav next" id="galleryNext" aria-label="Slide berikutnya">&#10095;</button>
+          <div class="gallery-dots" id="galleryDots" aria-label="Navigasi galeri"></div>
         </div>
       </div>
     </section>
@@ -175,6 +179,20 @@
             <button type="submit" class="btn">Kirim RSVP</button>
             <p class="form-message" id="formMessage"></p>
           </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="wishes">
+      <div class="container">
+        <div class="section-title reveal">
+          <h2>Ucapan & Doa</h2>
+          <p>Terima kasih atas doa dan harapan terbaik yang diberikan untuk kami.</p>
+        </div>
+        <div class="wishes-board reveal">
+          <div class="wishes-window">
+            <div class="wishes-track" id="wishesTrack"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -263,15 +281,128 @@
 
     const rsvpForm = document.getElementById('rsvpForm');
     const formMessage = document.getElementById('formMessage');
+    const wishesTrack = document.getElementById('wishesTrack');
+    let rollTimer = null;
+    let rollResetTimer = null;
 
-    rsvpForm.addEventListener('submit', (event) => {
+    function clearRollTimers() {
+      if (rollTimer) {
+        clearInterval(rollTimer);
+        rollTimer = null;
+      }
+      if (rollResetTimer) {
+        clearTimeout(rollResetTimer);
+        rollResetTimer = null;
+      }
+    }
+
+    function createWishItem(name, message) {
+      const item = document.createElement('article');
+      item.className = 'wish-item';
+
+      const title = document.createElement('h4');
+      title.textContent = name;
+
+      const text = document.createElement('p');
+      text.textContent = message;
+
+      item.appendChild(title);
+      item.appendChild(text);
+      return item;
+    }
+
+    function startRollScroll() {
+      clearRollTimers();
+
+      if (!wishesTrack) return;
+      const items = wishesTrack.querySelectorAll('.wish-item');
+      if (items.length < 2) return;
+
+      rollTimer = setInterval(() => {
+        const firstItem = wishesTrack.querySelector('.wish-item');
+        if (!firstItem) return;
+
+        const step = firstItem.offsetHeight + 12;
+        wishesTrack.style.transition = 'transform 0.6s ease';
+        wishesTrack.style.transform = `translateY(-${step}px)`;
+
+        rollResetTimer = setTimeout(() => {
+          wishesTrack.style.transition = 'none';
+          wishesTrack.style.transform = 'translateY(0)';
+          wishesTrack.appendChild(firstItem);
+        }, 620);
+      }, 2600);
+    }
+
+    function renderWishes(items) {
+      if (!wishesTrack) return;
+      wishesTrack.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        wishesTrack.appendChild(createWishItem('Belum ada ucapan', 'Jadilah yang pertama mengirim ucapan & doa.'));
+        clearRollTimers();
+        return;
+      }
+
+      items.forEach(item => {
+        wishesTrack.appendChild(createWishItem(item.name, item.message));
+      });
+
+      startRollScroll();
+    }
+
+    async function loadWishes() {
+      try {
+        const response = await fetch(`read-rsvp.php?t=${Date.now()}`, { cache: 'no-store' });
+        const result = await response.json();
+
+        if (!response.ok || result.status !== 'ok') {
+          throw new Error(result.message || 'Gagal memuat ucapan.');
+        }
+
+        renderWishes(result.data);
+      } catch (error) {
+        renderWishes([]);
+      }
+    }
+
+    rsvpForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
       const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
       const attendance = document.getElementById('attendance').value;
+      const message = document.getElementById('message').value.trim();
 
-      formMessage.textContent = `Terima kasih, ${name}. Konfirmasi Anda: ${attendance}.`;
-      rsvpForm.reset();
+      if (!name || !attendance || !message) {
+        formMessage.textContent = 'Mohon lengkapi data terlebih dahulu.';
+        return;
+      }
+
+      const submitButton = rsvpForm.querySelector('button[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+      formMessage.textContent = 'Mengirim konfirmasi...';
+
+      try {
+        const response = await fetch('save-rsvp.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, attendance, message })
+        });
+
+        const result = await response.json();
+        if (!response.ok || result.status !== 'ok') {
+          throw new Error(result.message || 'Gagal menyimpan konfirmasi.');
+        }
+
+        formMessage.textContent = `Terima kasih, ${name}. Konfirmasi Anda: ${attendance}.`;
+        rsvpForm.reset();
+        await loadWishes();
+      } catch (error) {
+        formMessage.textContent = 'Maaf, konfirmasi belum tersimpan. Coba lagi sebentar.';
+      } finally {
+        if (submitButton) submitButton.disabled = false;
+      }
     });
 
     const musicBtn = document.getElementById('musicBtn');
@@ -293,6 +424,65 @@
         alert('Browser memblokir autoplay. Klik sekali lagi untuk memutar musik.');
       }
     });
+
+    const galleryTrack = document.getElementById('galleryTrack');
+    const galleryPrev = document.getElementById('galleryPrev');
+    const galleryNext = document.getElementById('galleryNext');
+    const galleryDots = document.getElementById('galleryDots');
+    const gallerySlides = galleryTrack ? Array.from(galleryTrack.querySelectorAll('.gallery-item')) : [];
+    let galleryIndex = 0;
+
+    if (galleryTrack && gallerySlides.length > 0) {
+      gallerySlides.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = 'gallery-dot';
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Buka slide ${index + 1}`);
+        dot.addEventListener('click', () => scrollToSlide(index));
+        galleryDots.appendChild(dot);
+      });
+
+      const dots = Array.from(galleryDots.querySelectorAll('.gallery-dot'));
+
+      function updateDots() {
+        dots.forEach((dot, index) => dot.classList.toggle('active', index === galleryIndex));
+      }
+
+      function scrollToSlide(index) {
+        const total = gallerySlides.length;
+        galleryIndex = (index + total) % total;
+        gallerySlides[galleryIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        updateDots();
+      }
+
+      let scrollTimer = null;
+      galleryTrack.addEventListener('scroll', () => {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          const center = galleryTrack.scrollLeft + (galleryTrack.clientWidth / 2);
+          let closestIndex = 0;
+          let closestDistance = Number.POSITIVE_INFINITY;
+
+          gallerySlides.forEach((slide, index) => {
+            const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+            const distance = Math.abs(center - slideCenter);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closestIndex = index;
+            }
+          });
+
+          galleryIndex = closestIndex;
+          updateDots();
+        }, 90);
+      });
+
+      galleryPrev.addEventListener('click', () => scrollToSlide(galleryIndex - 1));
+      galleryNext.addEventListener('click', () => scrollToSlide(galleryIndex + 1));
+      updateDots();
+    }
+
+    loadWishes();
   </script>
 </body>
 

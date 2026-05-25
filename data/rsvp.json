@@ -1,0 +1,26 @@
+[
+    {
+        "id": "rsvp_6a140037756093.67481816",
+        "name": "Gede Herdian Setiawan",
+        "phone": "87861031321",
+        "attendance": "Hadir",
+        "message": "Selamat",
+        "created_at": "2026-05-25T07:54:31+00:00"
+    },
+    {
+        "id": "rsvp_6a140051a9a865.68248242",
+        "name": "Ratih",
+        "phone": "08123123",
+        "attendance": "Hadir",
+        "message": "Selamat menempuh",
+        "created_at": "2026-05-25T07:54:57+00:00"
+    },
+    {
+        "id": "rsvp_6a14006a172f74.75822543",
+        "name": "Aksara",
+        "phone": "0128319283",
+        "attendance": "Hadir",
+        "message": "Selamat ya",
+        "created_at": "2026-05-25T07:55:22+00:00"
+    }
+]
